@@ -13,6 +13,7 @@
         <module>export</module>
         <module>rest</module>
         <module>notification</module>
+        <module>requisites</module>
         <module>registry</module>
         <module>document</module>
         <module>energy-resource</module>
