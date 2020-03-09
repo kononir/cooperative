@@ -1,9 +1,12 @@
 package by.bsuir.rest;
 
-import by.bsuir.registry.model.Communication;
-import by.bsuir.registry.model.Person;
-import by.bsuir.registry.model.Property;
-import by.bsuir.registry.model.VicariousAuthority;
+import by.bsuir.reguisites.model.AuditBodyEntity;
+import by.bsuir.reguisites.model.CharterEntity;
+import by.bsuir.reguisites.model.CollegialOrganEntity;
+import by.bsuir.reguisites.model.OrganizationEntity;
+import by.bsuir.reguisites.model.StateRegistrationOfCapitalStructureEntity;
+import by.bsuir.reguisites.model.StateRegistrationOfLegalEntity;
+import by.bsuir.reguisites.model.SupervisorEntity;
 import com.google.common.collect.ImmutableList;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +30,13 @@ public class MongoConfig {
 
     @EventListener(ApplicationReadyEvent.class)
     public void initIndicesAfterStartup() {
-        for (Class<?> aClass : ImmutableList.of(Property.class, Communication.class, Person.class, VicariousAuthority.class)) {
+        for (Class<?> aClass : ImmutableList.of(AuditBodyEntity.class,
+                CharterEntity.class,
+                CollegialOrganEntity.class,
+                OrganizationEntity.class,
+                StateRegistrationOfCapitalStructureEntity.class,
+                StateRegistrationOfLegalEntity.class,
+                SupervisorEntity.class)) {
             IndexOperations indexOps = mongoTemplate.indexOps(aClass);
             IndexResolver resolver = new MongoPersistentEntityIndexResolver(mongoMappingContext);
             resolver.resolveIndexFor(aClass).forEach(indexOps::ensureIndex);
