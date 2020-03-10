@@ -58,4 +58,10 @@ public abstract class CrudController<S extends CrudService<E>, D, E> {
         return ResponseEntity.of(Optional.ofNullable(entityMapper.toDto(service.register(Objects.requireNonNull(entityMapper.fromDto(d))))));
     }
 
+    @GetMapping("/last")
+    public ResponseEntity<D> getLast() {
+        E e = service.getLast();
+        return e != null ? ResponseEntity.ok(Objects.requireNonNull(entityMapper.toDto(e))) : ResponseEntity.ok().build();
+    }
+
 }

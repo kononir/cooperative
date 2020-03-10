@@ -17,4 +17,5 @@ public interface CrudService<E> {
     Collection<E> findAll(int page, int limit);
     E register(E e);
     E update(E e);
+    E getLast();
 }

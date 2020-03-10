@@ -31,20 +31,6 @@ public class OrganizationEntity {
     private String email;
 
     @Field
-    private String supervisorId;
+    private List<String> payBills;
 
-    @Field
-    private String auditBodyId;
-
-    @Field
-    private String collegialOrganId;
-
-    @Field
-    private List<String> stateRegistrationOfLegalEntityId;
-
-    @Field
-    private List<String> charterId;
-
-    @Field
-    private List<String> stateRegistrationOfCapitalStructureId;
 }

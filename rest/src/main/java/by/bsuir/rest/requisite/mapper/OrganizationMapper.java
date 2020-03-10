@@ -10,19 +10,13 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring")
-public interface OrganizationMapper extends EntityMapper<OrganizationEntity, OrganizationDto> {
+public interface OrganizationMapper extends EntityMapper<OrganizationDto, OrganizationEntity> {
     @CompactMapper
     @Mappings({
-            @Mapping(source = "id", target = "id"),
             @Mapping(source = "mailingAddress", target = "mailingAddress"),
             @Mapping(source = "legalAddress", target = "legalAddress"),
             @Mapping(source = "email", target = "email"),
-            @Mapping(source = "supervisorId", target = "supervisorId"),
-            @Mapping(source = "auditBodyId", target = "auditBodyId"),
-            @Mapping(source = "collegialOrganId", target = "collegialOrganId"),
-            @Mapping(source = "stateRegistrationOfLegalEntityId", target = "stateRegistrationOfLegalEntityId"),
-            @Mapping(source = "charterId", target = "charterId"),
-            @Mapping(source = "stateRegistrationOfCapitalStructureId", target = "stateRegistrationOfCapitalStructureId")
+            @Mapping(source = "payBills", target = "payBills"),
     })
 
     @BeanMapping(ignoreByDefault = true)

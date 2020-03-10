@@ -24,4 +24,9 @@ public class OrganizationServiceImpl extends CrudServiceImpl<OrganizationReposit
         }
         throw new DataManipulateException();
     }
+
+    @Override
+    public OrganizationEntity getLast() {
+        return repository.findTopByOrderByIdDesc();
+    }
 }
