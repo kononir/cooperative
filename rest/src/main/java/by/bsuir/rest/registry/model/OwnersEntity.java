@@ -12,8 +12,8 @@ public class OwnersEntity {
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public OwnersEntity(
-            @JsonProperty("owner") PersonEntity personEntity,
-            @JsonProperty("properties") Collection<PropertyEntity> entities
+            @JsonProperty("personEntity") PersonEntity personEntity,
+            @JsonProperty("entities") Collection<PropertyEntity> entities
     ) {
         this.personEntity = personEntity;
         this.entities = entities;
