@@ -18,14 +18,18 @@ import classnames from 'classnames'
 import { InputGroup, InputGroupAddon, InputGroupText, Input } from 'reactstrap'
 import RegisterService from './services/RegisterService'
 import PropertiesService from './services/PropertiesService'
+import TrustService from "./services/TrustService";
+import PersonService from "./services/PersonService";
 
 export const Register = () => {
 
   const [property, setProperty] = useState({});
 
   const [ownersFilter, setOwnersFilter] = useState('')
+  const [trustsFilter, setTrustsFilter] = useState('')
   const [owner, setOwner] = useState([]);
   const [owners, setOwners] = useState([])
+  const [persons, setPersons] = useState(new Map());
   const [trusts, setTrusts] = useState([])
   const [properties, setProperties] = useState([])
   const [activeTab, setActiveTab] = useState('1')
@@ -52,13 +56,15 @@ export const Register = () => {
   }
 
   const renderTrustJournalData = () => {
-    return trusts.map(trust =>
-      <tr>
-        <td>{trust.from}</td>
-        <td>{trust.to}</td>
-        <td>{trust.startDate}</td>
-        <td>{trust.duration}</td>
-      </tr>,
+    const filteredTrusts = trusts.length > 0 ? trusts.filter(trust => trust.from.includes(trustsFilter)
+        || trust.to.includes(trustsFilter) || trust.startDate.includes(trustsFilter) || trust.endDate.includes(trustsFilter)) : [];
+    return filteredTrusts.map(trust =>
+        <tr>
+          <td>{trust.from}</td>
+          <td>{trust.to}</td>
+          <td>{trust.startDate}</td>
+          <td>{trust.endDate}</td>
+        </tr>,
     )
   }
 
@@ -228,6 +234,26 @@ export const Register = () => {
     })
   }
 
+  const updatePersons = () => {
+    PersonService.fetchPersons().then((value) => {
+      value.data.forEach(person => {
+        persons.set(person.id, person);
+      });
+      TrustService.fetchTrusts().then((value) => {
+        value.data.forEach(trust => {
+          const from = persons.get(trust.proprietorId);
+          const to = persons.get(trust.personId);
+          setTrusts([...trusts, {
+            from: `${from.surname} ${from.name} ${from.lastName}`,
+            to: `${to.surname} ${to.name} ${to.lastName}`,
+            startDate: new Date(trust.startDate * 1000).toISOString().substring(0, 10),
+            endDate: new Date(trust.startDate * 1000 + trust.duration * 24 * 60 * 60 * 1000).toISOString().substring(0, 10)
+          }]);
+        })
+      })
+    })
+  };
+
   const updateProperties = () => {
     PropertiesService.fetchProperties().then((value) => {
       let cleanedProperties = value.data.map(property => {
@@ -239,7 +265,6 @@ export const Register = () => {
           id: property.id,
         }
       })
-      debugger
       setProperties(cleanedProperties);
     })
   }
@@ -249,6 +274,7 @@ export const Register = () => {
   }
 
   useEffect(() => updateOwners(), [])
+  useEffect(() => updatePersons(), [])
   useEffect(() => updateProperties(), [])
 
   return (
@@ -300,6 +326,9 @@ export const Register = () => {
       <Col xs="9">
         <TabContent activeTab={activeTab} className="ml-5 mt-5 mr-2">
           <TabPane tabId="2">
+            <InputGroup>
+              <Input placeholder="Фильтр" value={trustsFilter} onChange={e => setTrustsFilter(e.target.value)}/>
+            </InputGroup>
             <Table striped>
               <thead>
               <tr>

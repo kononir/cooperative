@@ -16,9 +16,7 @@ public class VicariousAuthorityEntity {
     @ApiModelProperty(required = true, value = "Person which issued vicarious authority.")
     @NotBlank// From
     private String proprietorId;
-    @NotBlank // TimeUnit seconds since 1970....
     private long startDate;
-    @NotBlank // TimeUnit days
     private long duration;
     @NotBlank // To
     private String personId;
