@@ -12,34 +12,19 @@ import java.util.Date;
 
 @Getter
 @Setter
-@Document(collection = "supervisor")
-public class SupervisorEntity {
+@Document(collection = "subject_history")
+public class SubjectHistoryEntity {
 
     @Id
     @MongoId(FieldType.OBJECT_ID)
     private String id;
 
     @Field
-    private String surname;
+    private Date date;
 
     @Field
-    private String name;
+    private SubjectEventType type;
 
     @Field
-    private String patronymic;
-
-    @Field
-    private Date startDate;
-
-    @Field
-    private Date endDate;
-
-    @Field
-    private String protocolNumber;
-
-    @Field
-    private String protocolScan;
-
-    @Field
-    private String signatureScan;
+    private String file;
 }

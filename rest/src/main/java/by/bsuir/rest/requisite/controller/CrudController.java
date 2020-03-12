@@ -2,10 +2,8 @@ package by.bsuir.rest.requisite.controller;
 
 import by.bsuir.reguisites.service.CrudService;
 import by.bsuir.rest.common.mapper.EntityMapper;
-import by.bsuir.rest.requisite.IDValidationGroup;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,8 +14,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public abstract class CrudController<S extends CrudService<E>, D, E> {
-    private final S service;
-    private final EntityMapper<D, E> entityMapper;
+    protected final S service;
+    protected final EntityMapper<D, E> entityMapper;
 
     protected CrudController(S service, EntityMapper<D, E> entityMapper) {
         this.service = service;
@@ -27,11 +25,6 @@ public abstract class CrudController<S extends CrudService<E>, D, E> {
     @GetMapping
     public ResponseEntity<List<D>> get() {
         return ResponseEntity.ok(service.findAll().stream().map(entityMapper::toDto).collect(Collectors.toList()));
-    }
-
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<D> update(@RequestBody @Validated(value = IDValidationGroup.class) D d) {
-        return ResponseEntity.ok(entityMapper.toDto(service.update(entityMapper.fromDto(d))));
     }
 
     @GetMapping(path = "/{id}")
@@ -62,6 +55,12 @@ public abstract class CrudController<S extends CrudService<E>, D, E> {
     public ResponseEntity<D> getLast() {
         E e = service.getLast();
         return e != null ? ResponseEntity.ok(Objects.requireNonNull(entityMapper.toDto(e))) : ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") String id) {
+        service.delete(id);
+        return ResponseEntity.ok().build();
     }
 
 }

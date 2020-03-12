@@ -83,6 +83,11 @@ public abstract class CrudServiceImpl<R extends MongoRepository<E, String>, E>
 
     @Override
     public E register(E e) throws DataManipulateException {
-        return repository.insert(e);
+        return repository.save(e);
+    }
+
+    @Override
+    public void delete(String id) {
+        repository.deleteById(id);
     }
 }

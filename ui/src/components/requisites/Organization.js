@@ -3,6 +3,7 @@ import {Button, Container, Form, FormGroup, Input, Label, Modal, ModalFooter} fr
 import ModalHeader from "reactstrap/es/ModalHeader";
 import ModalBody from "reactstrap/es/ModalBody";
 import OrganizationService from "./services/OrganizationService";
+import {Link} from "react-router-dom";
 
 export const Organization = () => {
 
@@ -103,6 +104,14 @@ export const Organization = () => {
             </ModalFooter>
         </Modal>
 
+        <div>
+            <a href='/requisites/supervisor'>Руководитель</a>
+        </div>
+
+        <div>
+            <a href='/requisites/stateRegistrationOfLegal'>Регистрация юр. лица</a>
+        </div>
+        
         <Button className='btn btn-success' onClick={handleSubmit}>Добавить</Button>
     </Container>
 };

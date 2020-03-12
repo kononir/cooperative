@@ -7,4 +7,6 @@ import java.util.UUID;
 
 public interface StateRegistrationOfLegalEntityRepository
         extends MongoRepository<StateRegistrationOfLegalEntity, String> {
+
+    StateRegistrationOfLegalEntity findTopByOrderByIdDesc();
 }
