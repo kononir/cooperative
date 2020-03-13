@@ -8,4 +8,5 @@ export default {
   fetchOwnerCommunications(personID) {
     return api().get(`communication/person/${personID}`)
   }
+
 }

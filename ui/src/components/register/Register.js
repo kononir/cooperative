@@ -27,7 +27,7 @@ export const Register = () => {
 
   const [ownersFilter, setOwnersFilter] = useState('')
   const [trustsFilter, setTrustsFilter] = useState('')
-  const [owner, setOwner] = useState([]);
+  const [owner, setOwner] = useState({passportData:{}});
   const [owners, setOwners] = useState([])
   const [persons, setPersons] = useState(new Map());
   const [trusts, setTrusts] = useState([])
@@ -165,11 +165,11 @@ export const Register = () => {
             <Input placeholder="Площадь" onChange={e => {property.square = e.target.value}} value={property.square}/>
           </InputGroup>
           <InputGroup>
-            <Input placeholder="Доля"/>
+            <Input placeholder="Passport data" onChange={e => {property.ownerPassportData = e.target.value}} value={property.passportData}/>
           </InputGroup>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={() => {console.log(property); addPropertyAction(property);}}>Добавить</Button>
+          <Button color="primary" onClick={() => addPropertyAction(property)}>Добавить</Button>
           <Button color="secondary" onClick={togglePropertyModal}>Закрыть</Button>
         </ModalFooter>
       </Modal>
@@ -177,6 +177,11 @@ export const Register = () => {
   }
 
   const addPropertyAction = (property) => {
+    // PersonService.fetchPersons().then((persons) => {
+    //   persons.map((person) => {
+    //     person.passportData.data === property.ownerPassportData
+    //   })
+    // })
     addProperty(property).then(() => {
       togglePropertyModal();
       updateProperties();
@@ -189,33 +194,41 @@ export const Register = () => {
         <ModalHeader toggle={togglePropertyModal}>Владелец</ModalHeader>
         <ModalBody>
           <InputGroup>
-            <Input placeholder="ФИО" value={owner.fio} onChange={e => {owner.fio = e.target.value}}/>
+            <Input placeholder="Имя" value={owner.name} onChange={e => {owner.name = e.target.value}}/>
           </InputGroup>
           <InputGroup>
-            <Input placeholder="Паспортные данные" value={owner.passportData} onChange={e => {owner.passportData = e.target.value}}/>
+            <Input placeholder="Фамилия" value={owner.surname} onChange={e => {owner.surname= e.target.value}}/>
           </InputGroup>
           <InputGroup>
-            <Input placeholder="Мобильный телефон" />
+            <Input placeholder="Last name" value={owner.lastName} onChange={e => {owner.lastName = e.target.value}}/>
           </InputGroup>
           <InputGroup>
-            <Input placeholder="Домашний телефон"/>
+            <Input placeholder="Номер паспорта" value={owner.passportData.number} onChange={e => {owner.passportData.number = e.target.value}}/>
           </InputGroup>
           <InputGroup>
-            <Input placeholder="Почта"/>
+            <Input placeholder="data" value={owner.passportData.data} onChange={e => {owner.passportData.data = e.target.value}}/>
           </InputGroup>
           <InputGroup>
-            <Input placeholder="Скайп"/>
+            <Input placeholder="issuingAuthority" value={owner.passportData.issuingAuthority} onChange={e => {owner.passportData.issuingAuthority = e.target.value}}/>
           </InputGroup>
           <InputGroup>
-            <Input placeholder="Выданные доверенности"/>
+            <Input placeholder="personalNumber" value={owner.passportData.personalNumber} onChange={e => {owner.passportData.personalNumber = e.target.value}}/>
           </InputGroup>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={toggleOwnerModal}>Добавить</Button>
+          <Button color="primary" onClick={() => addOwnersAction(owner)}>Добавить</Button>
           <Button color="secondary" onClick={toggleOwnerModal}>Закрыть</Button>
         </ModalFooter>
       </Modal>
     )
+  }
+
+  const addOwnersAction = (owner) => {
+    owner.documentType='passport';
+    PersonService.addPerson(owner).then(() => {
+      toggleOwnerModal();
+      updateOwners();
+    })
   }
 
   const updateOwners = () => {
