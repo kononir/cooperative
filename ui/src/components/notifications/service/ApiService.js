@@ -9,18 +9,16 @@ const config = {
 };
 
 export default new (class ApiService {
-  async sendEmail(mailParams) {
+  async sendEmail(mailParams, attachments) {
     return await axios.post(
       "http://localhost:8080/api/notifications/send",
-      JSON.stringify(mailParams),
-      config
+      mailParams, attachments
     );
   }
 
-  async getMails() {
+  async getMailAddresses() {
     return await axios.get(
-      "http://localhost:8080/api/***/****", //getMailAdresses
-      //   JSON.stringify(mailParams),
+      "http://localhost:8080/api/communication",
       config
     );
   }

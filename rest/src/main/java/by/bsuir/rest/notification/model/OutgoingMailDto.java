@@ -4,7 +4,7 @@ import by.bsuir.notification.entity.enums.SendingType;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -27,4 +27,6 @@ public class OutgoingMailDto {
 
     @NotNull
     private List<String> receivers;
+
+    List<File> attachments;
 }

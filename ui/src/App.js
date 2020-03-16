@@ -13,6 +13,7 @@ import { Supervisor } from "./components/requisites/Supervisor";
 import { StateRegistrationOfLegal } from "./components/requisites/StateRegistrationOfLegal";
 import { SubjectHistory } from "./components/requisites/SubjectHistory";
 import { SubjectHistoryEvent } from "./components/requisites/SubjectHistoryEvent";
+import ContragentsContainer from './components/contragents/ContragentsContainer';
 
 function App() {
   return (
@@ -20,7 +21,7 @@ function App() {
       <CommonNavbar />
       <Switch>
         <Route path="/register" component={Register} />
-        <Route exact path="/" component={EnergyTableContainer} />
+        <Route exact path="/energy" component={EnergyTableContainer} />
         <Route exact path="/meters/new" component={NewMeter} />
         <Route exact path="/meters/update" component={NewRecord} />
         <Route exact path="/requisites/supervisor" component={Supervisor} />
@@ -41,6 +42,7 @@ function App() {
           component={SubjectHistoryEvent}
         />
         <Route path="/notifications" component={MailSender} />
+        <Route path='/contragents' component={ContragentsContainer}/>
       </Switch>
     </BrowserRouter>
   );
