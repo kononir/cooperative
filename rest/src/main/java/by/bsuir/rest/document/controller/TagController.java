@@ -23,6 +23,11 @@ import java.util.List;
 public class TagController {
     private TagManager tagManager;
 
+    /**
+     * Method get all available tags in system.
+     *
+     * @return All available tags
+     */
     @GetMapping
     public ResponseEntity<List<Tag>> getAll() {
         return ResponseEntity.ok(tagManager.findAll());
