@@ -130,6 +130,9 @@ export const Register = () => {
             <tr>
               <th>ФИО</th>
               <th>Моб. Телефон</th>
+              <th>Почта</th>
+              <th>Skype</th>
+              <th>Адрес</th>
               <th>Паспортные данные</th>
               <th>Паспортный номер</th>
               <th>Кто выдал паспорт</th>
@@ -205,6 +208,9 @@ export const Register = () => {
     if (owners.length > 0) {
       const filteredOwners = owners.length > 0 ? owners.filter(owner => (owner.fio && owner.fio.includes(ownersFilter))
           || (owner.mobilePhone && owner.mobilePhone.includes(ownersFilter))
+          || (owner.email && owner.email.includes(ownersFilter))
+          || (owner.skype && owner.skype.includes(ownersFilter))
+          || (owner.livingAddress && owner.livingAddress.includes(ownersFilter))
           || (owner.passportNumber && owner.passportNumber.includes(ownersFilter))
           || (owner.issuingAuthority && owner.issuingAuthority.includes(ownersFilter))
           || (owner.passportData && owner.passportData.includes(ownersFilter))) : [];
@@ -212,6 +218,9 @@ export const Register = () => {
           <tr>
             <td>{owner ? owner.fio : ''}</td>
             {<td>{owner.mobilePhone}</td>}
+            {<td>{owner.email}</td>}
+            {<td>{owner.skype}</td>}
+            {<td>{owner.livingAddress}</td>}
             <td>{owner ? owner.passportData : ''}</td>
             {<td>{owner.passportNumber}</td>}
             {<td>{owner.issuingAuthority}</td>}
@@ -230,6 +239,9 @@ export const Register = () => {
           </InputGroup>
           <InputGroup>
             <Input placeholder="Площадь" onChange={e => {property.square = e.target.value}} value={property.square}/>
+          </InputGroup>
+          <InputGroup>
+            <Input placeholder="Номер помещения транспортного назначения" onChange={e => {property.ptn = e.target.value}} value={property.ptn}/>
           </InputGroup>
           <form>
             <div className="form-group row">
@@ -295,6 +307,15 @@ export const Register = () => {
             <Input placeholder="Мобильный телефон" value={owner.mobilePhone} onChange={e => {owner.mobilePhone = e.target.value}}/>
           </InputGroup>
           <InputGroup>
+            <Input placeholder="Почта" value={owner.email} onChange={e => {owner.email = e.target.value}}/>
+          </InputGroup>
+          <InputGroup>
+            <Input placeholder="Skype" value={owner.skype} onChange={e => {owner.skype = e.target.value}}/>
+          </InputGroup>
+          <InputGroup>
+            <Input placeholder="Адрес" value={owner.livingAddress} onChange={e => {owner.livingAddress = e.target.value}}/>
+          </InputGroup>
+          <InputGroup>
             <Input placeholder="Номер паспорта" value={owner.passportData.number} onChange={e => {owner.passportData.number = e.target.value}}/>
           </InputGroup>
           <InputGroup>
@@ -319,12 +340,33 @@ export const Register = () => {
     owner.documentType='паспорт гражданина РБ';
     console.log(owner);
     PersonService.addPerson(owner).then((ownerResponse) => {
-      RegisterService.addCommunications(ownerResponse.data.id, {personId: ownerResponse.data.id, communicationType: 'mobilePhone', communicationValue: owner.mobilePhone}).then(() => {
+      let promises = [];
+      promises.push(RegisterService.addCommunications(ownerResponse.data.id, {personId: ownerResponse.data.id, communicationType: 'mobilePhone', communicationValue: owner.mobilePhone}));
+      if (owner.email) {
+        promises.push(RegisterService.addCommunications(ownerResponse.data.id, {
+          personId: ownerResponse.data.id,
+          communicationType: 'email',
+          communicationValue: owner.email
+        }));
+      }
+      if(owner.skype) {
+        promises.push(RegisterService.addCommunications(ownerResponse.data.id, {
+          personId: ownerResponse.data.id,
+          communicationType: 'skype',
+          communicationValue: owner.skype
+        }));
+      }
+      Promise.all(promises).then(()=>{
         toggleOwnerModal();
         updateOwners();
         updatePersons();
         setOwner({passportData:{}});
-      })
+      }).catch(()=>{
+        toggleOwnerModal();
+        updateOwners();
+        updatePersons();
+        setOwner({passportData:{}});
+      });
     })
   }
 
@@ -332,24 +374,24 @@ export const Register = () => {
     RegisterService.fetchOwners().then((value) => {
       value.data.forEach(owner => {
         RegisterService.fetchOwnerCommunications(owner.personEntity.id)
-          .then((communications) => {
-            let communicationObject = {};
-            communications.data.forEach((communication) => {
-              communicationObject[communication.communicationType] = communication.communicationValue;
+            .then((communications) => {
+              let communicationObject = {};
+              communications.data.forEach((communication) => {
+                communicationObject[communication.communicationType] = communication.communicationValue;
+              })
+              owners.push(
+                  {
+                    ...communicationObject,
+                    fio: `${owner.personEntity.surname} ${owner.personEntity.name} ${owner.personEntity.lastName}`,
+                    passportData: owner.personEntity.documentType === 'паспорт гражданина РБ' && owner.personEntity.passportData ? owner.personEntity.passportData.number : 'вид на жительство РБ',
+                    properties: owner.entities,
+                    issuingAuthority: owner.personEntity.documentType === 'паспорт гражданина РБ' && owner.personEntity.passportData ? owner.personEntity.passportData.issuingAuthority : '',
+                    passportNumber: owner.personEntity.documentType === 'паспорт гражданина РБ' && owner.personEntity.passportData ? owner.personEntity.passportData.number : '',
+                    id: owner.personEntity.id,
+                  }
+              )
+              setOwners([...owners])
             })
-            owners.push(
-              {
-                ...communicationObject,
-                fio: `${owner.personEntity.surname} ${owner.personEntity.name} ${owner.personEntity.lastName}`,
-                passportData: owner.personEntity.documentType === 'паспорт гражданина РБ' && owner.personEntity.passportData ? owner.personEntity.passportData.number : 'вид на жительство РБ',
-                properties: owner.entities,
-                issuingAuthority: owner.personEntity.documentType === 'паспорт гражданина РБ' && owner.personEntity.passportData ? owner.personEntity.passportData.issuingAuthority : '',
-                passportNumber: owner.personEntity.documentType === 'паспорт гражданина РБ' && owner.personEntity.passportData ? owner.personEntity.passportData.number : '',
-                id: owner.personEntity.id,
-              }
-            )
-            setOwners([...owners])
-          })
       })
     })
   }

@@ -41,4 +41,15 @@ public class CommunicationController extends BaseController<CommunicationManager
         return ResponseEntity.ok(baseManager.findByPersonId(personID).stream().map(entityMapper::toDto).collect(Collectors.toList()));
     }
 
+
+    @RequestMapping(
+            method = RequestMethod.POST,
+            path = "/person",
+            consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE}
+    )
+    public ResponseEntity<Collection<CommunicationEntity>> getByPersonIds(@RequestBody Collection<String> personIDs) {
+        return ResponseEntity.ok(baseManager.findByPersonId(personIDs).stream().map(entityMapper::toDto).collect(Collectors.toList()));
+    }
+
 }

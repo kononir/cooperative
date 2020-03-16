@@ -5,6 +5,10 @@ export default {
     return api().get('owners')
   },
 
+  batchFetchOwnerCommunications() {
+    return api().get(`communication`)
+  },
+
   fetchOwnerCommunications(personID) {
     return api().get(`communication/person/${personID}`)
   },
