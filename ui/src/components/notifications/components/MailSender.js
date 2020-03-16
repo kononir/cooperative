@@ -185,14 +185,14 @@ export default class MailSender extends React.Component {
               onChange={this.handleChange}
             />
           </FormGroup>
-          <label htmlFor="attachments">Прикрепить файл</label>
-          <input
-            ref={r => (this.fileRef = r)}
-            multiple
-            style={{ margin: "15px" }}
-            onChange={this.onFileUploaded}
-            type="file"
-          />
+          {/*<label htmlFor="attachments">Прикрепить файл</label>*/}
+          {/*<input*/}
+          {/*  ref={r => (this.fileRef = r)}*/}
+          {/*  multiple*/}
+          {/*  style={{ margin: "15px" }}*/}
+          {/*  onChange={this.onFileUploaded}*/}
+          {/*  type="file"*/}
+          {/*/>*/}
           <FormGroup>
             <label htmlFor="sendingType">Тип сообщения</label>
             <select
