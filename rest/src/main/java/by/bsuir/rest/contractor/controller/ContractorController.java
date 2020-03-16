@@ -22,9 +22,10 @@ public class ContractorController {
     private final ContractorMapper contractorMapper;
 
     @GetMapping
-    public Page<ContractorDto> getAll() {
+    public Page<ContractorDto> getAll(@RequestParam("type") String type) {
+
         Pageable pageable = PageRequest.of(0, 15, Sort.by("registrationDate").ascending().and(Sort.by("fullName")).ascending());
-        var contractors = contractorRepository.findAll(pageable)
+        var contractors = contractorRepository.findAllByType(type,pageable)
                 .stream()
                 .map(contractorMapper::toDto)
                 .collect(Collectors.toList());
@@ -43,7 +44,7 @@ public class ContractorController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ContractorDto> update(@PathVariable("id") String id,
-                                                   @RequestBody ContractorDto contractorDto) {
+                                                @RequestBody ContractorDto contractorDto) {
         contractorDto.setId(id);
         var entity = contractorMapper.fromDto(contractorDto);
         var savedContractor = contractorRepository.save(entity);
