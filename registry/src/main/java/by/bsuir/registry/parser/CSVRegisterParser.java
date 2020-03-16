@@ -1,6 +1,7 @@
 package by.bsuir.registry.parser;
 
 import by.bsuir.registry.model.Communication;
+import by.bsuir.registry.model.CommunicationTypes;
 import by.bsuir.registry.model.Person;
 import by.bsuir.registry.model.Property;
 import by.bsuir.registry.service.CommunicationManager;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -87,8 +87,8 @@ public class CSVRegisterParser {
             return null;
         }
         String[] splitFio = fio.getCellValue().split(" ");
-        person.setName(splitFio.length > 0 ? splitFio[0] : "");
-        person.setSurname(splitFio.length > 1 ? splitFio[1] : "");
+        person.setSurname(splitFio.length > 1 ? splitFio[0] : "");
+        person.setName(splitFio.length > 0 ? splitFio[1] : "");
         person.setLastName(splitFio.length > 2 ? splitFio[2] : "");
 
         CSVCell documentType = csvRow.getByName("VIDDOKA");
@@ -132,40 +132,45 @@ public class CSVRegisterParser {
     }
 
     private static List<Communication> restoreCommunications(CSVRow csvRow) {
-        return add(
-                add(
-                        add(
-                                add(
-                                        add(
+        return addAll(
+                addAll(
+                        addAll(
+                                addAll(
+                                        addAll(
                                                 new ArrayList<>(),
-                                                restoreCommunication(csvRow, "PHONE", "mobilePhone")
+                                                restoreCommunication(csvRow, "PHONE", CommunicationTypes.PHONE)
                                         ),
-                                        restoreCommunication(csvRow, "MAIL", "email")
+                                        restoreCommunication(csvRow, "MAIL", CommunicationTypes.EMAIL)
                                 ),
-                                restoreCommunication(csvRow, "VIBER", "viber")
+                                restoreCommunication(csvRow, "VIBER", CommunicationTypes.VIBER)
                         ),
-                        restoreCommunication(csvRow, "TELEG", "telegram")
+                        restoreCommunication(csvRow, "TELEG", CommunicationTypes.TELEGRAM)
                 ),
-                restoreCommunication(csvRow, "WHATS", "whatsapp")
+                restoreCommunication(csvRow, "WHATS", CommunicationTypes.WHATSAPP)
         );
     }
 
-    private static Communication restoreCommunication(CSVRow csvRow, String column, String type) {
+    private static List<Communication> restoreCommunication(CSVRow csvRow, String column, String type) {
         CSVCell cell = csvRow.getByName(column);
         if (StringUtils.isNotBlank(cell.getCellValue())) {
-            Communication communication = new Communication();
-            communication.setCommunicationType(type);
-            communication.setCommunicationValue(cell.getCellValue());
-            return communication;
+            String[] communications = cell.getCellValue().split(",");
+            List<Communication> res = new ArrayList<>();
+            for (String communication : communications) {
+                Communication comm = new Communication();
+                comm.setCommunicationType(type);
+                comm.setCommunicationValue(communication);
+                res.add(comm);
+            }
+            return res;
         }
         return null;
     }
 
-    private static <T> List<T> add(List<T> list, @Nullable T t) {
-        if (t == null) {
+    private static <T> List<T> addAll(List<T> list, @Nullable List<T> t) {
+        if (t == null || t.isEmpty()) {
             return list;
         }
-        list.add(t);
+        list.addAll(t);
         return list;
     }
 
