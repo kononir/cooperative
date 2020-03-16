@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Button, FormGroup } from "react-bootstrap";
-import { Container, Modal, ModalFooter } from "reactstrap";
+import {Button, FormGroup} from "react-bootstrap";
+import {Container, Modal, ModalFooter} from "reactstrap";
 import Input from "reactstrap/es/Input";
 import Form from "react-bootstrap/Form";
 import ApiService from "../service/ApiService";
@@ -18,21 +18,21 @@ export default class MailSender extends React.Component {
         subject: "",
         text: "",
         sendingType: "EMAIL",
-        index: "",
-        files: {}
+        index: ""
       },
+      attachments: [],
       showModal: false,
       selected: null,
-      // emails: []
-      emails: [
-        {
-          value: "evgeny.koenevega@gmail.com",
-          label: "evgeny"
-        },
-        { value: "ascasjnaks@asv.tu", label: "qwe" },
-        { value: "hhhq@a.o", label: "asdfz" },
-        { value: "ascask@dbfn.qvm", label: "sssasc" }
-      ]
+      emails: []
+      // emails: [
+      //   {
+      //     value: "evgeny.koenevega@gmail.com",
+      //     label: "evgeny"
+      //   },
+      //   { value: "ascasjnaks@asv.tu", label: "qwe" },
+      //   { value: "hhhq@a.o", label: "asdfz" },
+      //   { value: "ascask@dbfn.qvm", label: "sssasc" }
+      // ]
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -40,35 +40,50 @@ export default class MailSender extends React.Component {
   }
 
   componentDidMount = () => {
-    // this.getMailAdresses();
+    this.getMailAddresses();
   };
 
-  getMailAdresses = () => {
-    ApiService.getMails().then(response => {
+  getMailAddresses = () => {
+    ApiService.getMailAddresses().then(response => {
       if (response.status == 200) {
-        const emails = response.data;
-        /*     */
-        this.setState({ emails });
+        const emailsAddresses = [];
+        const emailsForSelection = [];
+        let responseData = response.data;
+        responseData.forEach(email => {
+          if(email['communicationType'] === 'email') {
+            let obj = {
+              value: email['communicationValue'],
+              label: email['communicationValue']
+            };
+            emailsForSelection.push(obj);
+            emailsAddresses.push(email['communicationValue']);
+          }
+        });
+        this.setState({
+          emails: emailsForSelection
+        });
+        console.log(emailsAddresses);
       }
     });
   };
 
   handleChangeSelect = selected => {
-    this.setState(state => ({
-      mailParams: {
-        ...state.mailParams,
-        receivers: selected
-      }
-    }));
+      this.setState(state => ({
+        mailParams: {
+          ...state.mailParams,
+          receivers: selected
+        }
+      }));
   };
 
   onFileUploaded = event => {
-    const files = event.target.files;
+    let attachments = event.target.files;
+    const filesToSend = [];
+    for(const file of attachments) {
+      filesToSend.push(file)
+    }
     this.setState(state => ({
-      mailParams: {
-        ...state.mailParams,
-        files
-      }
+        attachments: filesToSend
     }));
   };
 
@@ -91,34 +106,43 @@ export default class MailSender extends React.Component {
   };
 
   sendMail() {
-    let r = this.state.mailParams.receivers;
-    var receivers = "";
-    r.forEach(element => {
-      receivers += element.value + ", ";
+    // let r = this.state.mailParams.receivers;
+    // console.log(r);
+    // var receivers = "";
+    // r.forEach(element => {
+    //   receivers += element.value + ", ";
+    // });
+    let receiversArray = [];
+    this.state.mailParams.receivers.forEach( r => {
+      receiversArray.push(r.value);
     });
-    let params = this.state.mailParams;
-    console.log(receivers);
-    params.receivers = receivers;
-    ApiService.sendEmail(params).then(response => {
-      if (response.status == 200) {
-        this.setState(prevState => ({
-          mailParams: {
-            ...prevState.mailParams,
-            receivers: "",
-            subject: "",
-            text: "",
-            index: ""
-          },
-          showModal: true,
-          files: []
-        }));
+    this.setState(state => ({
+      mailParams: {
+        ...state.mailParams,
+        receivers: receiversArray
       }
+    }), () => {
+      console.log(this.state);
+      ApiService.sendEmail(this.state.mailParams, this.state.attachments).then(response => {
+          if (response.status == 200) {
+            this.setState(prevState => ({
+              mailParams: {
+                ...prevState.mailParams,
+                receivers: "",
+                subject: "",
+                text: "",
+                index: ""
+              },
+              showModal: true,
+              attachments: []
+            }));
+          }
+        });
     });
   }
 
   render() {
     const { receivers } = this.state.mailParams;
-    console.log(this.state);
     return (
       <Container className="col-md-4">
         <h2>Нотификации</h2>
@@ -161,7 +185,7 @@ export default class MailSender extends React.Component {
               onChange={this.handleChange}
             />
           </FormGroup>
-          <label htmlFor="files">Прикрепить файл</label>
+          <label htmlFor="attachments">Прикрепить файл</label>
           <input
             ref={r => (this.fileRef = r)}
             multiple
@@ -177,7 +201,7 @@ export default class MailSender extends React.Component {
               value={this.state.mailParams.sendingType}
               onChange={this.handleChange}
             >
-              <option value="EMAIL" selected="selected">
+              <option value="EMAIL" defaultValue="selected">
                 Электронное
               </option>
               <option value="SIMPLE">Бумажное</option>
