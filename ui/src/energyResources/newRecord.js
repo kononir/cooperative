@@ -3,6 +3,7 @@ import axios from 'axios';
 import DatePicker from 'react-date-picker';
 import { ButtonGroup, ToggleButton } from 'react-bootstrap';
 import moment from 'moment';
+import {withRouter} from 'react-router-dom';
 
 class NewRecord extends React.PureComponent {
     state = {
@@ -93,8 +94,7 @@ class NewRecord extends React.PureComponent {
                     console.log(res) 
             })
         }
-
-
+        this.props.history.push('/energy');
     }
 
     render() {
@@ -199,4 +199,4 @@ class NewRecord extends React.PureComponent {
     }
 }
 
-export default NewRecord;
+export default withRouter(NewRecord);

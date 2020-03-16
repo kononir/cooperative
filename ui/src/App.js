@@ -21,7 +21,7 @@ function App() {
       <CommonNavbar />
       <Switch>
         <Route path="/register" component={Register} />
-        <Route exact path="/" component={EnergyTableContainer} />
+        <Route exact path="/energy" component={EnergyTableContainer} />
         <Route exact path="/meters/new" component={NewMeter} />
         <Route exact path="/meters/update" component={NewRecord} />
         <Route exact path="/requisites/supervisor" component={Supervisor} />

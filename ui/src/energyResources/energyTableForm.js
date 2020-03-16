@@ -26,9 +26,13 @@ class EnergyTableForm extends React.PureComponent {
                         <div className="col-md-11">
                             <h2>Показания счётчиков</h2>
                         </div>
+            
                         <div className="col-3">
                             <button type="button" className="btn btn-outline-success" onClick={(e) => this.routeToNewRecord(e)}>
                                 <span aria-hidden="true">&oplus;</span>Новые показания
+                            </button>
+                            <button type="button" className="btn btn-outline-success" onClick={() => this.props.downloadExel()}>
+                                Exel
                             </button>
                         </div>
                     </div>

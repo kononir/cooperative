@@ -10,6 +10,10 @@ class EnergyTableContainer extends React.PureComponent {
         type: 'heat',
     }
 
+    downloadExel = () => {
+        window.open('http://localhost:8080/api/energy/electric/export')
+    }
+
     getData = (type, page = 0) => {
         console.log(type)
         return axios.get(`http://localhost:8080/api/energy/${type}?page=${page}`)
@@ -27,6 +31,7 @@ class EnergyTableContainer extends React.PureComponent {
                     onChangeTab={this.getData} 
                     type={this.state.type} 
                     data={this.state.data}
+                    downloadExel={this.downloadExel}
                 />
     }
 }
