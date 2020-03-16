@@ -3,7 +3,7 @@ package by.bsuir.rest.registry.controller;
 import by.bsuir.registry.model.Communication;
 import by.bsuir.registry.service.CommunicationManager;
 import by.bsuir.rest.common.mapper.EntityMapper;
-import by.bsuir.rest.registry.IDValidationGroup;
+import by.bsuir.rest.common.IDValidationGroup;
 import by.bsuir.rest.registry.model.CommunicationEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
